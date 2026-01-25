@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+bun.lock
+
+# Build artifacts
+target/
+.anchor/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keypairs (NEVER commit these)
+*-keypair.json
+*.backup.*
+
+# Test artifacts
+test-ledger/
