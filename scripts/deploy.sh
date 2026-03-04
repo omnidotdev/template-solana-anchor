@@ -194,11 +194,11 @@ echo -e "${GREEN}      ✓ Build complete${NC}"
 echo -e "${YELLOW}[6/9] Checking for orphaned buffers...${NC}"
 
 BUFFER_OUTPUT=$(solana program show --buffers 2>/dev/null || echo "")
-BUFFER_COUNT=$(echo "$BUFFER_OUTPUT" | grep -c "^[A-Za-z0-9]" || echo "0")
+BUFFER_COUNT=$(echo "$BUFFER_OUTPUT" | grep -cE "^[A-HJ-NP-Za-km-z1-9]{32,}" || true)
 
 if [[ "$BUFFER_COUNT" -gt 0 ]]; then
     echo -e "${YELLOW}      ⚠ Found $BUFFER_COUNT orphaned buffer(s):${NC}"
-    echo "$BUFFER_OUTPUT" | grep "^[A-Za-z0-9]" | while read -r line; do
+    echo "$BUFFER_OUTPUT" | grep -E "^[A-HJ-NP-Za-km-z1-9]{32,}" | while read -r line; do
         BUFFER_ADDR=$(echo "$line" | awk '{print $1}')
         echo "        - $BUFFER_ADDR"
     done
@@ -248,7 +248,7 @@ if [[ "$PROGRAM_EXISTS" == "0" || "$NEW_DEPLOYMENT" == true ]]; then
 else
     DEPLOY_TYPE="Upgrade"
     REQUIRED_SOL=1
-    ESTIMATED_COST="~0.01"
+    ESTIMATED_COST="0.01"
 fi
 
 REMAINING=$(awk "BEGIN { printf \"%.2f\", $BALANCE - ${ESTIMATED_COST:-0} }")

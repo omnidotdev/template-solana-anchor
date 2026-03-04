@@ -134,7 +134,7 @@ echo "5. ORPHANED BUFFERS"
 echo "   ----------------"
 
 BUFFER_OUTPUT=$(solana program show --buffers 2>/dev/null || echo "")
-BUFFER_COUNT=$(echo "$BUFFER_OUTPUT" | grep -c "^[A-Za-z0-9]" || echo "0")
+BUFFER_COUNT=$(echo "$BUFFER_OUTPUT" | grep -cE "^[A-HJ-NP-Za-km-z1-9]{32,}" || true)
 
 if [[ "$BUFFER_COUNT" -gt 0 ]]; then
     check_warn "Found $BUFFER_COUNT orphaned buffer(s) consuming SOL"
