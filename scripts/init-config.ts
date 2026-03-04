@@ -11,8 +11,9 @@ async function main() {
   const connection = new anchor.web3.Connection(rpcUrl, "confirmed");
   const provider = new anchor.AnchorProvider(connection, wallet, { commitment: "confirmed" });
 
-  const programId = new PublicKey("11111111111111111111111111111111");
-  const idl = JSON.parse(readFileSync("./target/idl/program.json", "utf-8"));
+  // Read program ID from IDL (set during anchor build from declare_id!)
+  const idl = JSON.parse(readFileSync("./target/idl/{{program-name}}.json", "utf-8"));
+  const programId = new PublicKey(idl.address);
   const program = new anchor.Program(idl, provider);
 
   const [configPda] = PublicKey.findProgramAddressSync([Buffer.from("config")], programId);
@@ -27,6 +28,20 @@ async function main() {
   } catch {
     console.log("Initializing...");
   }
+
+  // To validate token mints exist on-chain before init, use:
+  //
+  // import { getMint } from "@solana/spl-token";
+  //
+  // async function validateMint(connection, mint, label) {
+  //   try {
+  //     const info = await getMint(connection, mint);
+  //     console.log(`${label}: decimals=${info.decimals}, supply=${info.supply}`);
+  //   } catch {
+  //     console.error(`${label} mint not found: ${mint.toBase58()}`);
+  //     process.exit(1);
+  //   }
+  // }
 
   const tx = await program.methods.initialize().accounts({
     config: configPda,
